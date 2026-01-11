@@ -1,4 +1,5 @@
 
+import 'package:app_exe_ex/exception/nome_invalido.dart';
 import 'package:app_exe_ex/models/Aluno.dart';
 import 'package:app_exe_ex/models/console_utils.dart';
 
@@ -8,6 +9,10 @@ void execute() {
   print('---------------------------------------');
 
   String nomeAluno = ConsoleUtils.lerStringComTxt('Digite o nome do aluno: ');
+  if (nomeAluno.trim() == "") {
+    throw NomeInvalidoException();
+    
+  }
 
   var aluno = Aluno(nomeAluno);
   double? nota;
