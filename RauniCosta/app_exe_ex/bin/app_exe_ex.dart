@@ -1,19 +1,8 @@
 
-import 'dart:convert';
-import 'dart:io';
+import 'package:app_exe_ex/app_exe_ex.dart' as app_exe_ex;
+
 
 void main(List<String> arguments) {
-  print("Digite um numero:");
-  var line = stdin.readLineSync(encoding:utf8);
-
-  try {
-     double num = double.parse(line ?? "");
-     print("O numero digitado foi: $num");
-  } catch (e) {
-    print("Erro: Entrada invalida: $line Por favor, digite um numero valido.");
-  } finally {
-    print("Fim do programa.");
-  }
-
+  app_exe_ex.execute();
   
 }
