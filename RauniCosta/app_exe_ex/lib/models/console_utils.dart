@@ -3,7 +3,7 @@ import 'dart:io';
 
 class ConsoleUtils {
 
-
+// Métodos estáticos para leitura de dados do console
   static String lerStringComTxt (String Texto){
     print(Texto);
     return lerString(); 

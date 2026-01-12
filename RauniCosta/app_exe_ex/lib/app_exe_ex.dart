@@ -14,9 +14,11 @@ void execute() {
     
   }
 
+// Criar objeto Aluno com o nome digitado pelo usuário
   var aluno = Aluno(nomeAluno);
   double? nota;
 
+// Loop para adicionar notas até o usuário digitar "sair"
   do {
     nota = ConsoleUtils.lerDoubleComTxt('Digite a nota do aluno ou "sair" para finalizar: ');
     if (nota != null) {
@@ -25,8 +27,13 @@ void execute() {
   } while (nota != null);
   
   print('---------------------------------------'); 
+  print('---------------------------------------'); 
+  print('---------------------------------------'); 
+  
 
-
+// Exibir informações do aluno
+  print('Relatório do Aluno');
+  print('---------------------------------------');
   print('Aluno: ${aluno.getNome()}');
   print(aluno.getNotas());
   print('Nota Média: ${aluno.calcularMedia()}');
