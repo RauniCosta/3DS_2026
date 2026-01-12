@@ -9,7 +9,12 @@ environment:
 # Add regular dependencies here.
 dependencies:
   path: ^1.9.0
+# Add development dependencies here.
+  http: ^1.6.0
+  mockito: ^5.6.1
 
 dev_dependencies:
   lints: ^6.0.0
   test: ^1.25.6
+  build_runner: ^2.4.11
+

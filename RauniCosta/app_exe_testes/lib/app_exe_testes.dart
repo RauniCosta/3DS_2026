@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+
 double calcularDesconto (double valor, double desconto, bool percentual) {
   if (valor <= 0) {
     throw ArgumentError('O valor do produto deve ser maior que zero.');
@@ -20,3 +23,4 @@ String convertToUpper(String texto){
 double returnavalor(){
   return 10.0;
 }
+
