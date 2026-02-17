@@ -7,13 +7,38 @@ class CadastroPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Página de Cadastro'),
+        title: const Text('Novo Cadastro'),
       ),
-      body: Center(
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text('Página de Cadastro'),
+            const Text(
+              'Crie sua conta',
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 20),
+            const TextField(
+              decoration: InputDecoration(labelText: 'Nome Completo'),
+            ),
+            const SizedBox(height: 10),
+            const TextField(
+              decoration: InputDecoration(labelText: 'E-mail'),
+              keyboardType: TextInputType.emailAddress,
+            ),
+            const SizedBox(height: 10),
+            const TextField(
+              decoration: InputDecoration(labelText: 'Senha'),
+              obscureText: true,
+            ),
+            const SizedBox(height: 30),
+            ElevatedButton(
+              onPressed: () {
+                // Simulação de cadastro
+                Navigator.pop(context);
+              },
+              child: const Text('SALVAR DADOS'),
+            ),
           ],
         ),
       ),
