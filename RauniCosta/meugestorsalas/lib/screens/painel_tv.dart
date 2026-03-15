@@ -179,7 +179,7 @@ class _PainelTVState extends State<PainelTV> {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       child: DataTable(
-        headingRowColor: MaterialStateProperty.all(Colors.grey[200]),
+        headingRowColor: WidgetStateProperty.all(Colors.grey[200]),
         headingRowHeight: 90,
         dataRowMinHeight: 110,
         dataRowMaxHeight: 130,
@@ -210,7 +210,8 @@ class _PainelTVState extends State<PainelTV> {
           ),
           // Preenche as aulas da turma (limitado ao número de horários do turno)
           ...List.generate(horarios.length, (i) {
-            String sala = (i < t.aulas.length) ? t.aulas[i] : "-";
+            String dia = _obterDiaAtual();
+            String sala = (t.aulas[dia] != null && i < t.aulas[dia]!.length) ? t.aulas[dia]![i] : "-";
             return DataCell(
               Center(
                 child: Text(sala, style: TextStyle(
@@ -232,7 +233,7 @@ class _PainelTVState extends State<PainelTV> {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
       child: DataTable(
-        headingRowColor: MaterialStateProperty.all(Colors.amber[100]), // Cor diferente para destacar
+        headingRowColor: WidgetStateProperty.all(Colors.amber[100]), // Cor diferente para destacar
         headingRowHeight: 90,
         dataRowMinHeight: 140,
         dataRowMaxHeight: 160,
@@ -253,8 +254,8 @@ class _PainelTVState extends State<PainelTV> {
             )
           ),
           // Pegamos apenas os índices 0 e 1, que o Admin preencheu
-          DataCell(Center(child: Text(t.aulas.isNotEmpty ? t.aulas[0] : "-", style: const TextStyle(fontSize: 40, fontWeight: FontWeight.w900)))),
-          DataCell(Center(child: Text(t.aulas.length > 1 ? t.aulas[1] : "-", style: const TextStyle(fontSize: 40, fontWeight: FontWeight.w900)))),
+          DataCell(Center(child: Text((t.aulas[_obterDiaAtual()]?.isNotEmpty ?? false) ? t.aulas[_obterDiaAtual()]![0] : "-", style: const TextStyle(fontSize: 40, fontWeight: FontWeight.w900)))),
+          DataCell(Center(child: Text((t.aulas[_obterDiaAtual()]?.length ?? 0) > 1 ? t.aulas[_obterDiaAtual()]![1] : "-", style: const TextStyle(fontSize: 40, fontWeight: FontWeight.w900)))),
         ])).toList(),
       ),
     );

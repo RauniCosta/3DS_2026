@@ -12,11 +12,11 @@ class _SetupWizardState extends State<SetupWizard> {
   final JsonService _service = JsonService();
   
   // 1. Dados de Salas
-  List<String> _salas = [];
+  final List<String> _salas = [];
   final TextEditingController _salaController = TextEditingController();
 
   // 2. Dados de Turmas
-  List<Turma> _turmas = [];
+  final List<Turma> _turmas = [];
   final TextEditingController _turmaController = TextEditingController();
   String _modalidadeSelecionada = "Ensino Médio";
   String _turnoSelecionado = "Manhã";
@@ -32,11 +32,16 @@ class _SetupWizardState extends State<SetupWizard> {
       body: Stepper(
         currentStep: _passoAtual,
         onStepContinue: () {
-          if (_passoAtual < 2) setState(() => _passoAtual++);
-          else _finalizarESalvar();
+          if (_passoAtual < 2) {
+            setState(() => _passoAtual++);
+          } else {
+            _finalizarESalvar();
+          }
         },
         onStepCancel: () {
-          if (_passoAtual > 0) setState(() => _passoAtual--);
+          if (_passoAtual > 0) {
+            setState(() => _passoAtual--);
+          }
         },
         controlsBuilder: (context, details) {
           return Padding(
@@ -113,7 +118,7 @@ class _SetupWizardState extends State<SetupWizard> {
                   children: [
                     Expanded(
                       child: DropdownButtonFormField<String>(
-                        value: _modalidadeSelecionada,
+                        initialValue: _modalidadeSelecionada,
                         decoration: const InputDecoration(labelText: "Modalidade"),
                         items: ["Ensino Médio", "Modular"].map((m) => DropdownMenuItem(value: m, child: Text(m))).toList(),
                         onChanged: (val) => setState(() => _modalidadeSelecionada = val!),
@@ -122,7 +127,7 @@ class _SetupWizardState extends State<SetupWizard> {
                     const SizedBox(width: 10),
                     Expanded(
                       child: DropdownButtonFormField<String>(
-                        value: _turnoSelecionado,
+                        initialValue: _turnoSelecionado,
                         decoration: const InputDecoration(labelText: "Turno"),
                         items: ["Manhã", "Tarde", "Noite"].map((t) => DropdownMenuItem(value: t, child: Text(t))).toList(),
                         onChanged: (val) => setState(() => _turnoSelecionado = val!),
@@ -141,7 +146,13 @@ class _SetupWizardState extends State<SetupWizard> {
                           nome: _turmaController.text.toUpperCase(),
                           modalidade: _modalidadeSelecionada,
                           turno: _turnoSelecionado,
-                          aulas: List.filled(6, "-"), // 6 aulas em branco para começar
+                          aulas: {
+                            "Segunda": List.filled(6, "-"),
+                            "Terça": List.filled(6, "-"),
+                            "Quarta": List.filled(6, "-"),
+                            "Quinta": List.filled(6, "-"),
+                            "Sexta": List.filled(6, "-"),
+                          }, // 6 aulas em branco para começar
                         ));
                         _turmaController.clear();
                       });
@@ -178,9 +189,12 @@ class _SetupWizardState extends State<SetupWizard> {
     await _service.salvarBancoCompleto(_salas, _turmas);
     
     // 2. Avisa o usuário e vai para o painel de administração
+    if (!mounted) {
+      return;
+    }
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text("Escola configurada com sucesso!")),
     );
-    if (mounted) Navigator.pushReplacementNamed(context, '/admin');
+    Navigator.pushReplacementNamed(context, '/admin');
   }
 }

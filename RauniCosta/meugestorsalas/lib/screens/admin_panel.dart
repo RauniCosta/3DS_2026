@@ -167,9 +167,9 @@ class _AdminPanelState extends State<AdminPanel> with SingleTickerProviderStateM
   for (var t in _todasAsTurmas) {
     // Não verificamos a própria turma que estamos editando
     if (t.nome != turmaAtual.nome && t.turno == turmaAtual.turno) {
-      if (aulaIndex < t.aulas.length) {
+      if (t.aulas[_diaSelecionado] != null && aulaIndex < t.aulas[_diaSelecionado]!.length) {
         // Se a sala for composta (ex: A10/A9), precisamos separar para bloquear ambas
-        salasOcupadas.addAll(t.aulas[aulaIndex].split('/'));
+        salasOcupadas.addAll(t.aulas[_diaSelecionado]![aulaIndex].split('/'));
       }
     }
   }
@@ -187,13 +187,16 @@ class _AdminPanelState extends State<AdminPanel> with SingleTickerProviderStateM
           children: _todasAsSalas.map((sala) {
             // A sala "E.F." (Educação Física) e "-" geralmente podem ser repetidas
             bool estaOcupada = salasOcupadas.contains(sala) && sala != "E.F." && sala != "-";
-            bool selecionadaPelaTurma = turmaAtual.aulas[aulaIndex].split('/').contains(sala);
+            String salaNaAula = (turmaAtual.aulas[_diaSelecionado] != null && aulaIndex < turmaAtual.aulas[_diaSelecionado]!.length) 
+                ? turmaAtual.aulas[_diaSelecionado]![aulaIndex] 
+                : "-";
+            bool selecionadaPelaTurma = salaNaAula.split('/').contains(sala);
 
             return InkWell(
               // Se estiver ocupada, o clique não faz nada
               onTap: estaOcupada ? null : () {
                 setState(() {
-                  List<String> selecionadasNoMomento = turmaAtual.aulas[aulaIndex]
+                  List<String> selecionadasNoMomento = salaNaAula
                       .split('/')
                       .where((s) => s != "-")
                       .toList();
@@ -210,7 +213,7 @@ class _AdminPanelState extends State<AdminPanel> with SingleTickerProviderStateM
                     }
                   }
 
-                  turmaAtual.aulas[aulaIndex] = (selecionadasNoMomento.isEmpty ? "-" : selecionadasNoMomento.join('/')) as List<String>;
+                  turmaAtual.aulas[_diaSelecionado]![aulaIndex] = (selecionadasNoMomento.isEmpty ? "-" : selecionadasNoMomento.join('/'));
                 });
                 // Nota: Não fechamos o dialog para permitir selecionar 2 salas (divisão)
               },
@@ -266,9 +269,9 @@ class _AdminPanelState extends State<AdminPanel> with SingleTickerProviderStateM
   }
 
   void _dialogNovaTurma() {
-  final TextEditingController _nomeController = TextEditingController();
-  String _mod = "Ensino Médio";
-  String _turno = "Manhã";
+  final TextEditingController nomeController = TextEditingController();
+  String mod = "Ensino Médio";
+  String turno = "Manhã";
 
   showDialog(
     context: context,
@@ -279,23 +282,23 @@ class _AdminPanelState extends State<AdminPanel> with SingleTickerProviderStateM
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
-              controller: _nomeController,
+              controller: nomeController,
               decoration: const InputDecoration(labelText: "Nome da Turma"),
               textCapitalization: TextCapitalization.characters,
             ),
             const SizedBox(height: 15),
             DropdownButtonFormField<String>(
-              value: _mod,
+              initialValue: mod,
               decoration: const InputDecoration(labelText: "Modalidade"),
               items: ["Ensino Médio", "Modular"].map((m) => DropdownMenuItem(value: m, child: Text(m))).toList(),
-              onChanged: (val) => setDialogState(() => _mod = val!),
+              onChanged: (val) => setDialogState(() => mod = val!),
             ),
             const SizedBox(height: 15),
             DropdownButtonFormField<String>(
-              value: _turno,
+              initialValue: turno,
               decoration: const InputDecoration(labelText: "Turno"),
               items: ["Manhã", "Tarde", "Noite"].map((t) => DropdownMenuItem(value: t, child: Text(t))).toList(),
-              onChanged: (val) => setDialogState(() => _turno = val!),
+              onChanged: (val) => setDialogState(() => turno = val!),
             ),
           ],
         ),
@@ -303,16 +306,16 @@ class _AdminPanelState extends State<AdminPanel> with SingleTickerProviderStateM
           TextButton(onPressed: () => Navigator.pop(context), child: const Text("Cancelar")),
           ElevatedButton(
             onPressed: () {
-              if (_nomeController.text.isNotEmpty) {
+                if (nomeController.text.isNotEmpty) {
                 // Define a quantidade de aulas iniciais baseada no turno
                 // Manhã: 6 aulas, Tarde/Noite: 7 aulas
-                int totalAulas = (_turno == "Manhã") ? 6 : 7;
+                int totalAulas = (turno == "Manhã") ? 6 : 7;
 
                 setState(() {
                   _todasAsTurmas.add(Turma(
-                    nome: _nomeController.text.toUpperCase(),
-                    modalidade: _mod,
-                    turno: _turno,
+                    nome: nomeController.text.toUpperCase(),
+                    modalidade: mod,
+                    turno: turno,
                     aulas: {
                       "Segunda": List.filled(totalAulas, "-"),
                       "Terça": List.filled(totalAulas, "-"),
@@ -328,7 +331,7 @@ class _AdminPanelState extends State<AdminPanel> with SingleTickerProviderStateM
                 
                 Navigator.pop(context); // Fecha o Dialog
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("Turma ${_nomeController.text} adicionada!")),
+                  SnackBar(content: Text("Turma ${nomeController.text} adicionada!")),
                 );
               }
             },
